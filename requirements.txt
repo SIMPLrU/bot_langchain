@@ -54,3 +54,4 @@ watchdog==2.2.0
 watchfiles==0.18.1
 websockets==10.4
 yarl==1.8.2
+tenacity==8.1.0

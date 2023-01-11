@@ -2,6 +2,10 @@
 # from Wikipedia and does not use orchestration
 
 import requests
+import pathlib
+import subprocess
+import tempfile
+
 from langchain.llms import OpenAI
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.docstore.document import Document
@@ -37,10 +41,11 @@ sources = get_github_docs("dagster-io", "dagster")
 # sources = get_github_docs("jerryjliu", "gpt_index")
 # sources = get_github_docs("Kong", "docs.konghq.com")
 
+
 ##########################
 ##### Crawl Wiki URL #####
 ###########################
-# Define function to get wikipedia article content
+## Next, we’ll need some sample data for our toy example. For now, let’s use the first paragraph of various Wikipedia pages as our data sources. There’s a great Stack Overflow answer that gives us a magic incantation to fetch this data:
 # def get_wiki_data(title, first_paragraph_only):
 #     url = f"https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext=1&titles={title}"
 #     if first_paragraph_only:
@@ -51,17 +56,18 @@ sources = get_github_docs("dagster-io", "dagster")
 #         metadata={"source": f"https://en.wikipedia.org/wiki/{title}"},
 #     )
 
-# # Define list of wikipedia articles as sources
+# Define list of wikipedia articles as sources
 # sources = [
-#     get_wiki_data("Unix", False),
-#     get_wiki_data("Microsoft_Windows", False),
-#     get_wiki_data("Linux", False),
-#     get_wiki_data("Seinfeld", False),
-#     get_wiki_data("Matchbox_Twenty", False),
-#     get_wiki_data("Roman_Empire", False),
-#     get_wiki_data("London", False),
-#     get_wiki_data("Python_(programming_language)", False),
-#     get_wiki_data("Monty_Python", False),
+#     get_wiki_data("Unix", True),
+#     get_wiki_data("Microsoft_Windows", True),
+#     get_wiki_data("Linux", True),
+#     get_wiki_data("Seinfeld", True),
+#     get_wiki_data("Matchbox_Twenty", True),
+#     get_wiki_data("Roman_Empire", True),
+#     get_wiki_data("London", True),
+#     get_wiki_data("Python_(programming_language)", True),
+#     get_wiki_data("Monty_Python", True),
+#     get_wiki_data("Microservices", True),
 # ]
 ##########################
 ##### Crawl Wiki URL #####
@@ -69,20 +75,20 @@ sources = get_github_docs("dagster-io", "dagster")
 
 # Initialize list to hold chunks of text from sources
 source_chunks = []
+
 # Initialize text splitter to divide sources into chunks
 splitter = CharacterTextSplitter(separator=" ", chunk_size=1024, chunk_overlap=0)
+
 # Iterate over sources and split into chunks, appending each chunk to source_chunks
 for source in sources:
     for chunk in splitter.split_text(source.page_content):
         source_chunks.append(Document(page_content=chunk, metadata=source.metadata))
-
 
 # Create search index using FAISS and OpenAIEmbeddings
 search_index = FAISS.from_documents(source_chunks, OpenAIEmbeddings())
 
 # load_qa_with_sources_chain from Langchain
 chain = load_qa_with_sources_chain(OpenAI(temperature=0))
-
 
 # Define function to print answer
 def print_answer(question):
