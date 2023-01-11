@@ -12,6 +12,17 @@ from dagster import asset
 from dagster import FreshnessPolicy, RetryPolicy
 import pickle
 
+import openai  # for OpenAI API calls
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_random_exponential,
+)  # for exponential backoff
+
+
+@retry(wait=wait_random_exponential(min=1, max=40), stop=stop_after_attempt(6))
+def completion_with_backoff(**kwargs):
+    return openai.Completion.create(**kwargs)
 
 def get_github_docs(repo_owner, repo_name):
     # create a temporary directory

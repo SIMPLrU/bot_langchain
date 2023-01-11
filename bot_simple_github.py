@@ -41,28 +41,28 @@ sources = get_github_docs("dagster-io", "dagster")
 ##### Crawl Wiki URL #####
 ###########################
 # Define function to get wikipedia article content
-def get_wiki_data(title, first_paragraph_only):
-    url = f"https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext=1&titles={title}"
-    if first_paragraph_only:
-        url += "&exintro=1"
-    data = requests.get(url).json()
-    return Document(
-        page_content=list(data["query"]["pages"].values())[0]["extract"],
-        metadata={"source": f"https://en.wikipedia.org/wiki/{title}"},
-    )
+# def get_wiki_data(title, first_paragraph_only):
+#     url = f"https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext=1&titles={title}"
+#     if first_paragraph_only:
+#         url += "&exintro=1"
+#     data = requests.get(url).json()
+#     return Document(
+#         page_content=list(data["query"]["pages"].values())[0]["extract"],
+#         metadata={"source": f"https://en.wikipedia.org/wiki/{title}"},
+#     )
 
-# Define list of wikipedia articles as sources
-sources = [
-    get_wiki_data("Unix", False),
-    get_wiki_data("Microsoft_Windows", False),
-    get_wiki_data("Linux", False),
-    get_wiki_data("Seinfeld", False),
-    get_wiki_data("Matchbox_Twenty", False),
-    get_wiki_data("Roman_Empire", False),
-    get_wiki_data("London", False),
-    get_wiki_data("Python_(programming_language)", False),
-    get_wiki_data("Monty_Python", False),
-]
+# # Define list of wikipedia articles as sources
+# sources = [
+#     get_wiki_data("Unix", False),
+#     get_wiki_data("Microsoft_Windows", False),
+#     get_wiki_data("Linux", False),
+#     get_wiki_data("Seinfeld", False),
+#     get_wiki_data("Matchbox_Twenty", False),
+#     get_wiki_data("Roman_Empire", False),
+#     get_wiki_data("London", False),
+#     get_wiki_data("Python_(programming_language)", False),
+#     get_wiki_data("Monty_Python", False),
+# ]
 ##########################
 ##### Crawl Wiki URL #####
 ###########################
