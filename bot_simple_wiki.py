@@ -12,7 +12,7 @@ from langchain.text_splitter import CharacterTextSplitter
 
 ##########################
 ##### Crawl Wiki URL #####
-###########################
+###########################pyenv shell 3.8.16
 # Define function to get wikipedia article content
 def get_wiki_data(title, first_paragraph_only):
     url = f"https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext=1&titles={title}"
